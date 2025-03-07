@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Portfólio</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Fonte do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header com menu de navegação -->
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#sobre">Sobre</a></li>
+                <li><a href="#projetos">Projetos</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Seção Hero (Tela inicial) -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-content">
+            <div class="sobre-foto">
+                <img src="imagem/Imagem_Diogo.jpg" alt="Minha Foto">
+            </div>
+            <h1>Olá, eu sou Diogo Gabriel</h1>
+            <p>Desenvolvedor Web | Full Stack | Web Designer</p>
+            <a href="#projetos" class="btn">Ver Projetos</a>
+        </div>
+    </section>
+
+    <!-- Seção de Projetos -->
+    <section id="projetos" class="projetos">
+        <div class="projetos-container">
+            <!-- Lista de Segmentos à Direita -->
+            <div class="segmentos-lista">
+                <h2>Segmentos</h2>
+                <ul>
+                    <li><a href="#" data-segmento="ecommerce">E-commerce</a></li>
+                    <li><a href="#" data-segmento="landing-pages">Landing Pages</a></li>
+                    <li><a href="#" data-segmento="cursos">Cursos</a></li>
+                    <li><a href="#" data-segmento="sites">Institucional</a></li>
+                </ul>
+            </div>
+
+            <!-- Lista de Projetos à Esquerda -->
+            <div class="projetos-lista">
+                <h2>Projetos</h2>
+                <div class="projetos-conteudo" id="projetos-conteudo">
+                    <!-- Conteúdo dos projetos será carregado aqui dinamicamente -->
+                    <p>Selecione um segmento para ver os projetos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Sobre Mim -->
+    <section id="sobre" class="sobre">
+        <div class="sobre-container">
+            <div class="sobre-foto">
+                <img src="imagem/Imagem_Diogo.jpg" alt="Minha Foto">
+            </div>
+            <div class="sobre-conteudo">
+                <h2>Sobre Mim</h2>
+                <p>
+                    Olá! Meu nome é Diogo Gabriel, sou um desenvolvedor web com 6 Anos de experiência.
+                    Sou apaixonado por criar soluções digitais que combinam design moderno e funcionalidades robustas.
+                    Trabalho com tecnologias como HTML, CSS, JavaScript, React, Node.js, Python e C#.
+                </p>
+                <h3>Habilidades Técnicas</h3>
+                <ul class="habilidades-lista">
+                    <li>HTML5 & CSS3</li>
+                    <li>JavaScript (ES6+)</li>
+                    <li>React.js</li>
+                    <li>Node.js</li>
+                    <li>Git & GitHub</li>
+                    <li>UI/UX Design</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Contato -->
+    <section id="contato" class="contato">
+        <div class="contato-container">
+            <h2>Contato</h2>
+            <p>Entre em contato comigo pelo WhatsApp ou envie uma mensagem diretamente pelo formulário abaixo.</p>
+
+            <!-- Botão do WhatsApp -->
+            <a href="https://wa.me/5513981807417" class="btn-whatsapp" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                Enviar Mensagem no WhatsApp
+            </a>
+
+            <!-- Formulário de Contato -->
+            <form action="https://formsubmit.co/diogoliu@gmail.com" method="POST" class="contato-form">
+                <input type="text" name="nome" placeholder="Seu Nome" required>
+                <input type="email" name="email" placeholder="Seu Email" required>
+                <textarea name="mensagem" placeholder="Sua Mensagem" rows="5" required></textarea>
+                <button type="submit">Enviar Mensagem</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Script para interatividade -->
+    <script src="scripts.js"></script>
+</body>
+</html>
