@@ -733,3 +733,30 @@ header nav ul li a:hover {
         opacity: 0;
     }
 }
+footer {
+    
+    
+    color: white; /* Cor do texto */
+    text-align: center;
+    padding: 10px 0;
+    z-index: 1000; /* Garante que o footer fique acima de outros elementos */
+}
+
+/* Estilo do botão */
+#meuBotao {
+   
+    right: 5px; /* Distância da direita */
+    bottom: 5px; /* Distância do fundo */
+    padding: 5px 10px; /* Espaçamento interno */
+    background-color: #4CAF50; /* Cor de fundo */
+    color: white; /* Cor do texto */
+    border: none; /* Remove a borda */
+    border-radius: 5px; /* Borda arredondada */
+    cursor: pointer; /* Muda o cursor para uma mãozinha */
+    font-size: 16px; /* Tamanho da fonte */
+}
+
+/* Estilo quando o botão é hover */
+#meuBotao:hover {
+    background-color: #45a049; /* Cor de fundo ao passar o mouse */
+}
