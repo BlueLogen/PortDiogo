@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="checklist.html">Checklist</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Seção de Status (Ouro, XP e Barra de XP) -->
+    <section class="status">
+        <div class="status-container">
+            <div class="ouro">
+                <span>Ouro: </span>
+                <span id="contador-ouro">0</span>
+            </div>
+            <div class="xp">
+                <span>XP: </span>
+                <span id="contador-xp">0</span>
+                <span> | Nível: </span>
+                <span id="contador-nivel">1</span>
+            </div>
+            <div class="barra-xp">
+                <div id="progresso-xp"></div>
+            </div>
+            
+        </div>
+        <div id="bolinhas-container"></div>
+    </section>
+
+    <!-- Seção da Checklist -->
+    <section class="checklist">
+        <h2>Minha Checklist</h2>
+        
+        <!-- Formulário para adicionar itens -->
+        <form id="form-adicionar">
+            <input type="text" id="input-titulo" placeholder="Título da tarefa" required>
+            <textarea id="input-descricao" placeholder="Descrição da tarefa" required></textarea>
+            <select id="input-importancia" required>
+                <option value="baixa">Baixa</option>
+                <option value="media">Média</option>
+                <option value="alta">Alta</option>
+            </select>
+            <button type="submit">Adicionar Tarefa</button>
+        </form>
+
+        <!-- Lista de tarefas a fazer -->
+        <h3>Tarefas a Fazer</h3>
+        <ul id="lista-a-fazer"></ul>
+
+        <!-- Lista de tarefas concluídas -->
+        <h3>Tarefas Concluídas</h3>
+        <ul id="lista-concluidas"></ul>
+    </section>
+
+    <!-- Seção de Desafios -->
+    <section class="desafios">
+        <h2>Desafios</h2>
+        <ul id="lista-desafios"></ul>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 Diogo Gabriel. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>

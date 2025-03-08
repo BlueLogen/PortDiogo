@@ -127,3 +127,328 @@ document.querySelectorAll(".segmentos-lista a").forEach(link => {
         carregarProjetos(segmento);
     });
 });
+
+
+/*checklist */
+
+// Array para armazenar as tarefas
+let tarefas = [];
+
+// Variáveis para ouro, XP e nível
+let ouro = 0;
+let xp = 0;
+let nivel = 1;
+let xpNecessario = 100; // XP necessário para o próximo nível
+
+// Lista de desafios
+const desafios = [
+    { id: 1, descricao: 'Complete 5 tarefas', objetivo: 5, recompensa: 50, concluido: false },
+    { id: 2, descricao: 'Ganhe 100 de ouro', objetivo: 100, recompensa: 100, concluido: false },
+    { id: 3, descricao: 'Alcance o nível 5', objetivo: 5, recompensa: 200, concluido: false },
+];
+
+// Função para salvar dados no localStorage
+function salvarDados() {
+    localStorage.setItem('ouro', ouro);
+    localStorage.setItem('xp', xp);
+    localStorage.setItem('nivel', nivel);
+    localStorage.setItem('xpNecessario', xpNecessario);
+    localStorage.setItem('tarefas', JSON.stringify(tarefas));
+    localStorage.setItem('desafios', JSON.stringify(desafios));
+}
+
+// Função para carregar dados do localStorage
+function carregarDados() {
+    ouro = parseInt(localStorage.getItem('ouro')) || 0;
+    xp = parseInt(localStorage.getItem('xp')) || 0;
+    nivel = parseInt(localStorage.getItem('nivel')) || 1;
+    xpNecessario = parseInt(localStorage.getItem('xpNecessario')) || 100;
+    tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+    const desafiosSalvos = JSON.parse(localStorage.getItem('desafios'));
+    if (desafiosSalvos) {
+        desafios.forEach((desafio, index) => {
+            if (desafiosSalvos[index]) {
+                desafio.concluido = desafiosSalvos[index].concluido;
+            }
+        });
+    }
+}
+
+// Função para calcular o XP necessário para o próximo nível
+function calcularXpNecessario() {
+    return 100 + (nivel - 1) * 50; // Aumenta a dificuldade progressivamente
+}
+
+// Função para mostrar notificações
+function mostrarNotificacao(mensagem) {
+    const notificacao = document.createElement('div');
+    notificacao.className = 'notificacao';
+    notificacao.textContent = mensagem;
+
+    document.body.appendChild(notificacao);
+
+    // Remove a notificação após 3 segundos
+    setTimeout(() => {
+        notificacao.remove();
+    }, 3000);
+}
+
+// Função para verificar desafios
+function verificarDesafios() {
+    desafios.forEach(desafio => {
+        if (!desafio.concluido) {
+            let objetivoAlcancado = false;
+
+            switch (desafio.id) {
+                case 1: // Complete 5 tarefas
+                    objetivoAlcancado = tarefas.filter(t => t.concluida).length >= desafio.objetivo;
+                    break;
+                case 2: // Ganhe 100 de ouro
+                    objetivoAlcancado = ouro >= desafio.objetivo;
+                    break;
+                case 3: // Alcance o nível 5
+                    objetivoAlcancado = nivel >= desafio.objetivo;
+                    break;
+            }
+
+            if (objetivoAlcancado) {
+                desafio.concluido = true;
+                ouro += desafio.recompensa;
+                mostrarNotificacao(`Desafio concluído: ${desafio.descricao}. Você ganhou ${desafio.recompensa} ouro!`);
+                atualizarStatus();
+            }
+        }
+    });
+}
+
+// Função para atualizar o status (ouro, XP, nível e barra de XP)
+function atualizarStatus() {
+    document.getElementById('contador-ouro').textContent = ouro;
+    document.getElementById('contador-xp').textContent = xp;
+    document.getElementById('contador-nivel').textContent = nivel;
+    document.getElementById('progresso-xp').style.width = `${(xp / xpNecessario) * 100}%`;
+
+    // Verifica se o usuário subiu de nível
+    if (xp >= xpNecessario) {
+        nivel++;
+        xp -= xpNecessario; // Remove o XP gasto para subir de nível
+        xpNecessario = calcularXpNecessario(); // Atualiza o XP necessário para o próximo nível
+        mostrarNotificacao(`Parabéns! Você subiu para o nível ${nivel}.`);
+        atualizarStatus();
+    }
+
+    verificarDesafios(); // Verifica se algum desafio foi concluído
+    salvarDados(); // Salva os dados após cada atualização
+}
+
+// Função para renderizar as tarefas
+function renderizarTarefas() {
+    const listaAFazer = document.getElementById('lista-a-fazer');
+    const listaConcluidas = document.getElementById('lista-concluidas');
+
+    // Limpa as listas antes de renderizar
+    listaAFazer.innerHTML = '';
+    listaConcluidas.innerHTML = '';
+
+    tarefas.forEach((tarefa, index) => {
+        const li = document.createElement('li');
+
+        // Título, descrição, horário e importância da tarefa
+        const titulo = document.createElement('div');
+        titulo.className = 'tarefa-titulo';
+        titulo.textContent = tarefa.titulo;
+
+        const descricao = document.createElement('div');
+        descricao.className = 'tarefa-descricao';
+        descricao.textContent = tarefa.descricao;
+
+        const horario = document.createElement('div');
+        horario.className = 'tarefa-horario';
+        horario.textContent = `Criada em: ${tarefa.horario}`;
+
+        const importancia = document.createElement('div');
+        importancia.className = `tarefa-importancia ${tarefa.importancia}`;
+        importancia.textContent = `Importância: ${tarefa.importancia.toUpperCase()}`;
+
+        // Botões de ação
+        const botoes = document.createElement('div');
+        botoes.className = 'botoes-tarefa';
+
+        // Dentro da função renderizarTarefas
+        const botaoConcluir = document.createElement('button');
+        botaoConcluir.className = tarefa.concluida ? 'concluir' : 'concluir';
+        botaoConcluir.textContent = tarefa.concluida ? 'Desfazer' : 'Concluir';
+        botaoConcluir.dataset.index = index; // Adiciona o índice da tarefa
+        botaoConcluir.addEventListener('click', () => toggleConcluida(index, botaoConcluir));
+
+        const botaoRemover = document.createElement('button');
+        botaoRemover.className = 'remover';
+        botaoRemover.textContent = 'Remover';
+        botaoRemover.addEventListener('click', () => removerTarefa(index));
+
+        botoes.appendChild(botaoConcluir);
+        botoes.appendChild(botaoRemover);
+
+        // Adiciona os elementos ao item da lista
+        li.appendChild(titulo);
+        li.appendChild(descricao);
+        li.appendChild(horario);
+        li.appendChild(importancia);
+        li.appendChild(botoes);
+
+        // Adiciona o item à lista correta
+        if (tarefa.concluida) {
+            listaConcluidas.appendChild(li);
+        } else {
+            listaAFazer.appendChild(li);
+        }
+    });
+}
+
+// Função para renderizar os desafios
+function renderizarDesafios() {
+    const listaDesafios = document.getElementById('lista-desafios');
+    listaDesafios.innerHTML = '';
+
+    desafios.forEach(desafio => {
+        const li = document.createElement('li');
+        if (desafio.concluido) li.classList.add('concluido');
+
+        const descricao = document.createElement('span');
+        descricao.textContent = desafio.descricao;
+
+        const recompensa = document.createElement('span');
+        recompensa.textContent = `Recompensa: ${desafio.recompensa} ouro`;
+
+        li.appendChild(descricao);
+        li.appendChild(recompensa);
+        listaDesafios.appendChild(li);
+    });
+}
+
+// Função para adicionar uma nova tarefa
+function adicionarTarefa(titulo, descricao, importancia) {
+    const horario = new Date().toLocaleString(); // Captura o horário atual
+    tarefas.push({ titulo, descricao, importancia, horario, concluida: false });
+    renderizarTarefas();
+}
+
+// Função para remover uma tarefa
+function removerTarefa(index) {
+    tarefas.splice(index, 1);
+    renderizarTarefas();
+}
+
+// Função para criar bolinhas verdes
+function criarBolinhas(quantidade, botaoConcluir) {
+    const container = document.getElementById('bolinhas-container');
+
+    // Obtém a posição do botão "Concluir"
+    const rect = botaoConcluir.getBoundingClientRect();
+    const posicaoX = rect.left + rect.width / 2; // Centro horizontal do botão
+    const posicaoY = rect.top + rect.height / 2; // Centro vertical do botão
+
+    for (let i = 0; i < quantidade; i++) {
+        const bolinha = document.createElement('div');
+        bolinha.className = 'bolinha';
+
+        // Posiciona a bolinha no centro do botão "Concluir"
+        bolinha.style.left = `${posicaoX}px`;
+        bolinha.style.top = `${posicaoY}px`;
+
+        // Adiciona a bolinha ao container
+        container.appendChild(bolinha);
+
+        // Remove a bolinha após a animação
+        bolinha.addEventListener('animationend', () => {
+            bolinha.remove();
+        });
+    }
+}
+
+// Função para marcar/desmarcar como concluída
+function toggleConcluida(index, botaoConcluir) {
+    const tarefa = tarefas[index];
+    tarefa.concluida = !tarefa.concluida;
+
+    // Adiciona ouro e XP com base na importância
+    if (tarefa.concluida) {
+        let xpGanho = 0;
+        let ouroGanho = 0;
+
+        switch (tarefa.importancia) {
+            case 'baixa':
+                ouroGanho = 10;
+                xpGanho = 10;
+                break;
+            case 'media':
+                ouroGanho = 20;
+                xpGanho = 20;
+                break;
+            case 'alta':
+                ouroGanho = 30;
+                xpGanho = 30;
+                break;
+        }
+
+        ouro += ouroGanho;
+        xp += xpGanho;
+
+        // Cria bolinhas verdes
+        criarBolinhas(xpGanho, botaoConcluir);
+
+        mostrarNotificacao(`Você ganhou ${xpGanho} XP e ${ouroGanho} ouro!`);
+    } else {
+        // Remove ouro e XP se a tarefa for desfeita
+        switch (tarefa.importancia) {
+            case 'baixa':
+                ouro -= 10;
+                xp -= 10;
+                break;
+            case 'media':
+                ouro -= 20;
+                xp -= 20;
+                break;
+            case 'alta':
+                ouro -= 30;
+                xp -= 30;
+                break;
+        }
+    }
+
+    atualizarStatus();
+    renderizarTarefas();
+}
+
+// Evento para o botão "Concluir"
+document.querySelectorAll('.concluir').forEach(botao => {
+    botao.addEventListener('click', function (e) {
+        const index = parseInt(this.dataset.index); // Obtém o índice da tarefa
+        toggleConcluida(index, this); // Passa o botão clicado como referência
+    });
+});
+
+// Evento para o formulário de adicionar tarefa
+document.getElementById('form-adicionar').addEventListener('submit', function (e) {
+    e.preventDefault(); // Impede o recarregamento da página
+
+    const inputTitulo = document.getElementById('input-titulo');
+    const inputDescricao = document.getElementById('input-descricao');
+    const inputImportancia = document.getElementById('input-importancia');
+
+    const titulo = inputTitulo.value.trim();
+    const descricao = inputDescricao.value.trim();
+    const importancia = inputImportancia.value;
+
+    if (titulo !== '' && descricao !== '') {
+        adicionarTarefa(titulo, descricao, importancia);
+        inputTitulo.value = ''; // Limpa o campo de título
+        inputDescricao.value = ''; // Limpa o campo de descrição
+    }
+});
+
+// Carregar dados ao iniciar a página
+carregarDados();
+atualizarStatus();
+renderizarTarefas();
+renderizarDesafios();
