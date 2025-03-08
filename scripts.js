@@ -331,12 +331,14 @@ function adicionarTarefa(titulo, descricao, importancia) {
     const horario = new Date().toLocaleString(); // Captura o horário atual
     tarefas.push({ titulo, descricao, importancia, horario, concluida: false });
     renderizarTarefas();
+    salvarDados();
 }
 
 // Função para remover uma tarefa
 function removerTarefa(index) {
     tarefas.splice(index, 1);
     renderizarTarefas();
+    salvarDados();
 }
 
 // Função para criar bolinhas verdes
