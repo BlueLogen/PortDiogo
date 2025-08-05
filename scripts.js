@@ -1,5 +1,4 @@
 // Dados dos projetos (simulando um banco de dados)
-// Dados dos projetos (simulando um banco de dados)
 const projetos = {
     sites: [
         {
@@ -89,7 +88,6 @@ const projetos = {
     ]
 };
 
-
 // Função para carregar projetos
 function carregarProjetos(segmento) {
     const conteudo = document.getElementById("projetos-conteudo");
@@ -128,8 +126,20 @@ document.querySelectorAll(".segmentos-lista a").forEach(link => {
     });
 });
 
+// Função para atualizar o badge com o total de projetos
+function atualizarBadgeTotal() {
+    const total = Object.values(projetos)
+        .reduce((sum, arr) => sum + arr.length, 0);
+    const badge = document.getElementById('total-projetos');
+    if (badge) badge.textContent = total;
+}
 
-/*checklist */
+// Evento para abrir/fechar menu mobile
+document.querySelector('.hamburger').addEventListener('click', () => {
+    document.querySelector('nav').classList.toggle('active');
+});
+
+/* Checklist / Gamificação */
 
 // Array para armazenar as tarefas
 let tarefas = [];
@@ -274,9 +284,8 @@ function renderizarTarefas() {
         const botoes = document.createElement('div');
         botoes.className = 'botoes-tarefa';
 
-        // Dentro da função renderizarTarefas
         const botaoConcluir = document.createElement('button');
-        botaoConcluir.className = tarefa.concluida ? 'concluir' : 'concluir';
+        botaoConcluir.className = 'concluir';
         botaoConcluir.textContent = tarefa.concluida ? 'Desfazer' : 'Concluir';
         botaoConcluir.dataset.index = index; // Adiciona o índice da tarefa
         botaoConcluir.addEventListener('click', () => toggleConcluida(index, botaoConcluir));
@@ -422,14 +431,6 @@ function toggleConcluida(index, botaoConcluir) {
     renderizarTarefas();
 }
 
-// Evento para o botão "Concluir"
-document.querySelectorAll('.concluir').forEach(botao => {
-    botao.addEventListener('click', function (e) {
-        const index = parseInt(this.dataset.index); // Obtém o índice da tarefa
-        toggleConcluida(index, this); // Passa o botão clicado como referência
-    });
-});
-
 // Evento para o formulário de adicionar tarefa
 document.getElementById('form-adicionar').addEventListener('submit', function (e) {
     e.preventDefault(); // Impede o recarregamento da página
@@ -449,8 +450,9 @@ document.getElementById('form-adicionar').addEventListener('submit', function (e
     }
 });
 
-// Carregar dados ao iniciar a página
+// Inicialização ao carregar a página
 carregarDados();
 atualizarStatus();
 renderizarTarefas();
 renderizarDesafios();
+atualizarBadgeTotal();
