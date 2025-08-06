@@ -456,3 +456,81 @@ atualizarStatus();
 renderizarTarefas();
 renderizarDesafios();
 atualizarBadgeTotal();
+// Formata data em pt-BR
+function formatDate(date) {
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+  
+  // Publica um novo post
+// Formata data em pt-BR
+function formatDate(date) {
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+  
+  // Publica um novo post somente com senha correta
+  document.getElementById('publish-btn').addEventListener('click', function() {
+    const textarea = document.getElementById('post-content');
+    const content = textarea.value.trim();
+    const passwordInput = document.getElementById('post-password');
+    const pwd = passwordInput.value;
+  
+    if (!content) {
+      alert('Escreva algo antes de publicar.');
+      return;
+    }
+    if (pwd !== '4321') {
+      alert('Senha inválida. Você não pode publicar.');
+      return;
+    }
+  
+    const postsContainer = document.getElementById('posts-container');
+    const postEl = document.createElement('div');
+    postEl.classList.add('post');
+  
+    const dateStr = formatDate(new Date());
+  
+    postEl.innerHTML = `
+      <div class="post-avatar">
+        <img src="imagem/Imagem_Diogo.jpg" alt="Minha Foto">
+      </div>
+      <div class="post-body">
+        <div class="post-header">
+          <span class="date">${dateStr}</span>
+        </div>
+        <div class="bubble">${content}</div>
+        <div class="post-actions">
+          <button class="like-btn">Curtir <span class="count">0</span></button>
+        </div>
+      </div>
+    `;
+    postsContainer.prepend(postEl);
+  
+    // limpa textarea e senha
+    textarea.value = '';
+    passwordInput.value = '';
+  });
+  
+  // Curtir/descurtir
+  document.getElementById('posts-container').addEventListener('click', function(e) {
+    const btn = e.target.closest('.like-btn');
+    if (!btn) return;
+    const countSpan = btn.querySelector('.count');
+    let count = parseInt(countSpan.textContent, 10);
+    if (btn.classList.contains('liked')) {
+      count--;
+      btn.classList.remove('liked');
+    } else {
+      count++;
+      btn.classList.add('liked');
+    }
+    countSpan.textContent = count;
+  });
+  
