@@ -1,4 +1,103 @@
-// Dados dos projetos (simulando um banco de dados)
+
+// só roda depois que o HTML todo for lido
+document.addEventListener('DOMContentLoaded', () => {
+    const publishBtn     = document.getElementById('publish-btn');
+    const contentEl      = document.getElementById('post-content');
+    const passwordEl     = document.getElementById('post-password');
+    const postsContainer = document.getElementById('posts-container');
+    const MAX_POSTS      = 3;
+    const ADMIN_PWD      = '4321';
+  
+    function formatDate(d) {
+      return d.toLocaleDateString('pt-BR', {
+        day:   '2-digit',
+        month: 'long',
+        year:  'numeric'
+      });
+    }
+  
+    publishBtn.addEventListener('click', () => {
+      const text = contentEl.value.trim();
+      const pwd  = passwordEl.value;
+  
+      if (!text) {
+        alert('Escreva algo antes de publicar.');
+        return;
+      }
+      if (pwd !== ADMIN_PWD) {
+        alert('Senha inválida.');
+        return;
+      }
+  
+      // Monta o post com Like e Delete
+      const post = document.createElement('div');
+      post.classList.add('post');
+      post.innerHTML = `
+        <div class="post-avatar">
+          <img src="imagem/Imagem_Diogo.jpg" alt="Minha Foto">
+        </div>
+        <div class="post-body">
+          <div class="post-header">
+            <span class="date">${formatDate(new Date())}</span>
+          </div>
+          <div class="bubble">${text}</div>
+          <div class="post-actions">
+            <button class="like-btn">
+              <span class="like-icon">👍</span>
+              <span class="count">0</span>
+            </button>
+            <button class="delete-btn">🗑️</button>
+          </div>
+        </div>
+      `;
+  
+      // Insere no topo e remove antigas além do limite
+      postsContainer.prepend(post);
+      while (postsContainer.children.length > MAX_POSTS) {
+        postsContainer.removeChild(postsContainer.lastChild);
+      }
+  
+      contentEl.value  = '';
+      passwordEl.value = '';
+    });
+  
+    postsContainer.addEventListener('click', e => {
+      // CURTIR
+      const likeBtn = e.target.closest('.like-btn');
+      if (likeBtn) {
+        const icon     = likeBtn.querySelector('.like-icon');
+        const countSp  = likeBtn.querySelector('.count');
+        let count      = parseInt(countSp.textContent, 10);
+  
+        if (likeBtn.classList.contains('liked')) {
+          count--; likeBtn.classList.remove('liked');
+        } else {
+          count++; likeBtn.classList.add('liked');
+        }
+        countSp.textContent = count;
+  
+        icon.classList.add('jump');
+        icon.addEventListener('animationend', () => {
+          icon.classList.remove('jump');
+        }, { once: true });
+  
+        return;
+      }
+  
+      // APAGAR
+      const delBtn = e.target.closest('.delete-btn');
+      if (delBtn) {
+        const entrada = prompt('Digite a senha para apagar este post:');
+        if (entrada === ADMIN_PWD) {
+          const postEl = delBtn.closest('.post');
+          postEl.remove();
+        } else {
+          alert('Senha incorreta. Não foi possível apagar.');
+        }
+      }
+    });
+  });
+  
 const projetos = {
     sites: [
         {
@@ -457,80 +556,5 @@ renderizarTarefas();
 renderizarDesafios();
 atualizarBadgeTotal();
 // Formata data em pt-BR
-function formatDate(date) {
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    });
-  }
-  
-  // Publica um novo post
-// Formata data em pt-BR
-function formatDate(date) {
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    });
-  }
-  
-  // Publica um novo post somente com senha correta
-  document.getElementById('publish-btn').addEventListener('click', function() {
-    const textarea = document.getElementById('post-content');
-    const content = textarea.value.trim();
-    const passwordInput = document.getElementById('post-password');
-    const pwd = passwordInput.value;
-  
-    if (!content) {
-      alert('Escreva algo antes de publicar.');
-      return;
-    }
-    if (pwd !== '4321') {
-      alert('Senha inválida. Você não pode publicar.');
-      return;
-    }
-  
-    const postsContainer = document.getElementById('posts-container');
-    const postEl = document.createElement('div');
-    postEl.classList.add('post');
-  
-    const dateStr = formatDate(new Date());
-  
-    postEl.innerHTML = `
-      <div class="post-avatar">
-        <img src="imagem/Imagem_Diogo.jpg" alt="Minha Foto">
-      </div>
-      <div class="post-body">
-        <div class="post-header">
-          <span class="date">${dateStr}</span>
-        </div>
-        <div class="bubble">${content}</div>
-        <div class="post-actions">
-          <button class="like-btn">Curtir <span class="count">0</span></button>
-        </div>
-      </div>
-    `;
-    postsContainer.prepend(postEl);
-  
-    // limpa textarea e senha
-    textarea.value = '';
-    passwordInput.value = '';
-  });
-  
-  // Curtir/descurtir
-  document.getElementById('posts-container').addEventListener('click', function(e) {
-    const btn = e.target.closest('.like-btn');
-    if (!btn) return;
-    const countSpan = btn.querySelector('.count');
-    let count = parseInt(countSpan.textContent, 10);
-    if (btn.classList.contains('liked')) {
-      count--;
-      btn.classList.remove('liked');
-    } else {
-      count++;
-      btn.classList.add('liked');
-    }
-    countSpan.textContent = count;
-  });
+
   

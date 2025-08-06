@@ -762,9 +762,11 @@ footer {
     }
 }
 /* === Seção Blog === */
+/* === Seção Blog === */
 .blog {
     padding: 60px 20px;
-    background: #fff;
+    background-color: #0A192F;
+    color: #ccd6f6;
   }
   
   .blog-container {
@@ -776,6 +778,7 @@ footer {
     font-size: 2rem;
     margin-bottom: 20px;
     text-align: center;
+    color: #64ffda; /* destaque personalizado */
   }
   
   /* Form de novo post */
@@ -784,7 +787,6 @@ footer {
     align-items: flex-start;
     margin-bottom: 30px;
   }
-  
   .new-post .post-avatar img {
     width: 50px;
     height: 50px;
@@ -792,21 +794,42 @@ footer {
     margin-right: 10px;
     object-fit: cover;
   }
-  
   .new-post textarea {
     flex: 1;
     resize: vertical;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #333;
     border-radius: 8px;
+    background: #112240;
+    color: #e6f1fa;
     font-family: 'Poppins', sans-serif;
     font-size: 1rem;
     min-height: 80px;
     margin-right: 10px;
   }
-  
+  .new-post input[type="password"] {
+    width: 100px;
+    padding: 8px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #112240;
+    color: #e6f1fa;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    margin-right: 10px;
+  }
   .new-post .btn {
     align-self: flex-end;
+    background-color: #64ffda;
+    color: #0A192F;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .new-post .btn:hover {
+    opacity: 0.9;
   }
   
   /* Container de posts */
@@ -814,39 +837,32 @@ footer {
     display: flex;
     margin-bottom: 20px;
   }
-  
-  .post .post-avatar img {
+  .post-avatar img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
+    object-fit: cover;
   }
-  
   .post-body {
     flex: 1;
   }
-  
-  .post-header {
-    display: flex;
-    align-items: center;
+  .post-header .date {
+    font-size: 0.85rem;
+    color: #8892b0;
     margin-bottom: 5px;
   }
   
-  .post-header .date {
-    font-size: 0.85rem;
-    color: #666;
-  }
-  
+  /* Balão de conversa */
   .bubble {
-    background: #f1f0f0;
+    background: #112240;
     border-radius: 15px;
     padding: 12px;
     position: relative;
     font-size: 1rem;
     line-height: 1.4;
+    color: #e6f1fa; /* texto mais forte */
   }
-  
-  /* Triângulo da bolha */
   .bubble::after {
     content: '';
     position: absolute;
@@ -854,38 +870,55 @@ footer {
     left: -8px;
     border-width: 8px;
     border-style: solid;
-    border-color: transparent #f1f0f0 transparent transparent;
+    border-color: transparent #112240 transparent transparent;
   }
   
+  /* Ações do post */
   .post-actions {
     margin-top: 5px;
   }
   
+  /* Botão de like */
   .like-btn {
-    cursor: pointer;
     background: none;
     border: none;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem;
-    color: #385898;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.2rem;
+  }
+  .like-icon {
+    display: inline-block;
+    user-select: none;
+  }
+  .count {
+    margin-left: 5px;
+    font-size: 1rem;
+    color: #ccd6f6;
+  }
+  .like-btn.liked .like-icon {
+    color: #e0245e;
+  }
+  
+  /* Animação de salto */
+  @keyframes jump {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+  }
+  .like-icon.jump {
+    animation: jump 0.3s ease;
+  }
+  .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 10px;
+    color: #e0245e;
     display: inline-flex;
     align-items: center;
   }
-  
-  .like-btn .count {
-    margin-left: 5px;
-  }
-  
-  /* Estado curtido */
-  .like-btn.liked {
-    color: #e0245e;
-  }
-  .new-post input[type="password"] {
-    width: 100px;
-    padding: 8px;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
-  }
+  .delete-btn:hover {
+    opacity: 0.8;
+  }  
