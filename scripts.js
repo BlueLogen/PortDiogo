@@ -1,102 +1,148 @@
 
 // só roda depois que o HTML todo for lido
 document.addEventListener('DOMContentLoaded', () => {
+    // → coloque aqui a URL exata do seu Web App:
+    const URL            = 'https://script.google.com/macros/s/AKfycbyu2ZJy5i39ONPhyn9N11tJVHcqBHtEbnRTz5ZjWIFgwSzrUjdfTTChgpIFZUXFsbCd/exec';
     const publishBtn     = document.getElementById('publish-btn');
     const contentEl      = document.getElementById('post-content');
     const passwordEl     = document.getElementById('post-password');
     const postsContainer = document.getElementById('posts-container');
-    const MAX_POSTS      = 3;
-    const ADMIN_PWD      = '4321';
   
-    function formatDate(d) {
-      return d.toLocaleDateString('pt-BR', {
+    // formata ISO → pt-BR
+    function formatDate(iso) {
+      return new Date(iso).toLocaleDateString('pt-BR', {
         day:   '2-digit',
         month: 'long',
         year:  'numeric'
       });
     }
   
-    publishBtn.addEventListener('click', () => {
-      const text = contentEl.value.trim();
-      const pwd  = passwordEl.value;
+    // carrega posts da planilha
+    function loadPosts() {
+      fetch(`${URL}?action=get`)
+        .then(r => r.json())
+        .then(posts => {
+          postsContainer.innerHTML = '';
+          posts.forEach(p => {
+            const div = document.createElement('div');
+            div.classList.add('post');
+            div.dataset.id = p.id;
+            div.innerHTML = `
+              <div class="post-avatar">
+                <img src="imagem/Imagem_Diogo.jpg" alt="Minha Foto">
+              </div>
+              <div class="post-body">
+                <div class="post-header">
+                  <span class="date">${formatDate(p.date)}</span>
+                </div>
+                <div class="bubble">${p.content}</div>
+                <div class="post-actions">
+                  <button class="like-btn">
+                    <span class="like-icon">👍</span>
+                    <span class="count">${p.likes}</span>
+                  </button>
+                  <button class="delete-btn">🗑️</button>
+                </div>
+              </div>
+            `;
+            postsContainer.append(div);
+          });
+        })
+        .catch(err => console.error('Erro ao carregar posts:', err));
+    }
   
-      if (!text) {
+    // publica novo post
+    publishBtn.addEventListener('click', () => {
+      const content  = contentEl.value.trim();
+      const password = passwordEl.value;
+      if (!content) {
         alert('Escreva algo antes de publicar.');
         return;
       }
-      if (pwd !== ADMIN_PWD) {
-        alert('Senha inválida.');
-        return;
-      }
   
-      // Monta o post com Like e Delete
-      const post = document.createElement('div');
-      post.classList.add('post');
-      post.innerHTML = `
-        <div class="post-avatar">
-          <img src="imagem/Imagem_Diogo.jpg" alt="Minha Foto">
-        </div>
-        <div class="post-body">
-          <div class="post-header">
-            <span class="date">${formatDate(new Date())}</span>
-          </div>
-          <div class="bubble">${text}</div>
-          <div class="post-actions">
-            <button class="like-btn">
-              <span class="like-icon">👍</span>
-              <span class="count">0</span>
-            </button>
-            <button class="delete-btn">🗑️</button>
-          </div>
-        </div>
-      `;
-  
-      // Insere no topo e remove antigas além do limite
-      postsContainer.prepend(post);
-      while (postsContainer.children.length > MAX_POSTS) {
-        postsContainer.removeChild(postsContainer.lastChild);
-      }
-  
-      contentEl.value  = '';
-      passwordEl.value = '';
+      fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action:   'new',
+          content:  content,
+          password: password
+        })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.error) {
+          alert(res.error);
+        } else {
+          contentEl.value  = '';
+          passwordEl.value = '';
+          loadPosts();
+        }
+      })
+      .catch(err => console.error('Erro ao publicar:', err));
     });
   
+    // curtidas e exclusão
     postsContainer.addEventListener('click', e => {
+      const postEl = e.target.closest('.post');
+      if (!postEl) return;
+      const id = postEl.dataset.id;
+  
       // CURTIR
-      const likeBtn = e.target.closest('.like-btn');
-      if (likeBtn) {
-        const icon     = likeBtn.querySelector('.like-icon');
-        const countSp  = likeBtn.querySelector('.count');
-        let count      = parseInt(countSp.textContent, 10);
+      if (e.target.closest('.like-btn')) {
+        const btn     = e.target.closest('.like-btn');
+        const icon    = btn.querySelector('.like-icon');
+        const countSp = btn.querySelector('.count');
+        const liked   = btn.classList.toggle('liked');
+        const delta   = liked ? 1 : -1;
   
-        if (likeBtn.classList.contains('liked')) {
-          count--; likeBtn.classList.remove('liked');
-        } else {
-          count++; likeBtn.classList.add('liked');
-        }
-        countSp.textContent = count;
-  
-        icon.classList.add('jump');
-        icon.addEventListener('animationend', () => {
-          icon.classList.remove('jump');
-        }, { once: true });
+        fetch(URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'like',
+            id:     id,
+            delta:  delta
+          })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.likes != null) {
+            countSp.textContent = data.likes;
+            icon.classList.add('jump');
+            icon.addEventListener('animationend', () => icon.classList.remove('jump'), { once: true });
+          }
+        })
+        .catch(err => console.error('Erro ao curtir:', err));
   
         return;
       }
   
       // APAGAR
-      const delBtn = e.target.closest('.delete-btn');
-      if (delBtn) {
-        const entrada = prompt('Digite a senha para apagar este post:');
-        if (entrada === ADMIN_PWD) {
-          const postEl = delBtn.closest('.post');
-          postEl.remove();
-        } else {
-          alert('Senha incorreta. Não foi possível apagar.');
-        }
+      if (e.target.closest('.delete-btn')) {
+        const senha = prompt('Digite a senha para apagar este post:');
+        fetch(URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action:   'delete',
+            id:       id,
+            password: senha
+          })
+        })
+        .then(r => r.json())
+        .then(res => {
+          if (res.error) {
+            alert(res.error);
+          } else {
+            loadPosts();
+          }
+        })
+        .catch(err => console.error('Erro ao apagar:', err));
       }
     });
+  
+    // inicializa feed
+    loadPosts();
   });
+  
   
 const projetos = {
     sites: [
